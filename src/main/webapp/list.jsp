@@ -14,6 +14,9 @@
 	<main>
 		<article>
 			<h3>商品一覧</h3>
+			<c:if test="${!empty requestScope.count}">
+				<p>${requestScope.count}件の商品が存在しました。</p>
+			</c:if>
 			<div class="items">
 				<c:forEach items="${requestScope.items}" var="item">
 					<form action="CartServlet" method="post">

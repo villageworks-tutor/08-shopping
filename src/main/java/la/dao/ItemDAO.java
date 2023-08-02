@@ -150,6 +150,12 @@ public class ItemDAO {
 		}
 	}
 
+	/**
+	 * 商品名にキーワードが含まれている商品を取得する
+	 * @param keyword 検索キーワード
+	 * @return List<ItemBean> 商品リスト
+	 * @throws DAOException
+	 */
 	public List<ItemBean> findByName(String keyword) throws DAOException {
 		// 実行するSQLを設定
 		String sql = "SELECT * FROM item WHERE name LIKE ? ORDER BY code";
@@ -171,6 +177,66 @@ public class ItemDAO {
 				// 商品リストを返却
 				return list;
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの取得に失敗しました。");
+		}
+	}
+
+	/**
+	 * カテゴリ検索の件数を取得する
+	 * @param categoryCode 検索対象のカテゴリーコード
+	 * @return 検索結果の商品件数
+	 * @throws DAOException
+	 */
+	public int countByCategory(int categoryCode) throws DAOException {
+		// 実行するSQLの設定
+		String sql = "SELECT count(*) FROM item WHERE category_code = ?";
+		try (// SQL実行オブジェクトの取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにデータをバインド
+			pstmt.setInt(1, categoryCode);
+			try (// SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 結果セットから件数を取得
+				int count = 0;
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+				// 件数の返却
+				return count;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの取得に失敗しました。");
+		}
+	}
+
+	/**
+	 * キーワード検索の件数を取得する
+	 * @param keyword 検索キーワード
+	 * @return 検索結果の商品件数
+	 * @throws DAOException
+	 */
+	public int countByName(String keyword) throws DAOException {
+		// 実行するSQLを設定
+		String sql = "SELECT count(*) FROM item WHERE name LIKE ?";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにデータをバインド
+			pstmt.setString(1, "%" + keyword + "%");
+			try (// SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 結果セットから件数を取得
+				int count = 0;
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+				// 件数の返却
+				return count;
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new DAOException("レコードの取得に失敗しました。");
