@@ -59,8 +59,11 @@ public class ShowItemServlet extends HttpServlet {
 				// 取得したカテゴリーコードに属する商品を取得
 				ItemDAO dao = new ItemDAO();
 				List<ItemBean> list = dao.findByCategory(categoryCode);
-				// 取得した商品リストをリクエストスコープに登録
+				// 検索結果件数を取得
+				int count = dao.countByCategory(categoryCode);
+				// 取得した商品リストと検索件数をリクエストスコープに登録
 				request.setAttribute("items", list);
+				request.setAttribute("count", count);
 				// 画面遷移
 				RequestDispatcher dispatcher = request.getRequestDispatcher("/list.jsp");
 				dispatcher.forward(request, response);
@@ -92,8 +95,11 @@ public class ShowItemServlet extends HttpServlet {
 				// 商品名にキーワードを含む商品を取得
 				ItemDAO dao = new  ItemDAO();
 				List<ItemBean> list  = dao.findByName(keyword);
-				// 取得した商品リストをリクエストスコープに登録して画面遷移
+				// 検索結果件数を取得
+				int count = dao.countByName(keyword);
+				// 取得した商品リストと検索件数をリクエストスコープに登録して画面遷移
 				request.setAttribute("items", list);
+				request.setAttribute("count", count);
 				this.gotoPage(request, response, "/list.jsp");
 			} catch (DAOException e) {
 				e.printStackTrace();
