@@ -150,4 +150,31 @@ public class ItemDAO {
 		}
 	}
 
+	public List<ItemBean> findByName(String keyword) throws DAOException {
+		// 実行するSQLを設定
+		String sql = "SELECT * FROM item WHERE name LIKE ? ORDER BY code";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにデータをバインド
+			pstmt.setString(1, "%" + keyword + "%");
+			try (// SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 結果セットから商品リストへの詰替え
+				List<ItemBean> list = new ArrayList<ItemBean>();
+				while (rs.next()) {
+					ItemBean bean = new ItemBean();
+					bean.setCode(rs.getInt("code"));
+					bean.setName(rs.getString("name"));
+					bean.setPrice(rs.getInt("price"));
+					list.add(bean);
+				}
+				// 商品リストを返却
+				return list;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの取得に失敗しました。");
+		}
+	}
+
 }

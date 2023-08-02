@@ -19,7 +19,7 @@
 					<form action="CartServlet" method="post">
 						商品番号：<b>${item.code}</b><br />
 						商品名：<b>${item.name}</b><br />
-						価格：<b>${item.price}</b><br />
+						価格：<b>${item.price}円</b><br />
 						数量：<b>
 						<select name="quantity">
 							<% for (int i = 0; i < 5; i++) { %>
