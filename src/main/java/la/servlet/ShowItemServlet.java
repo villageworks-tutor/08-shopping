@@ -86,8 +86,20 @@ public class ShowItemServlet extends HttpServlet {
 				this.gotoPage(request, response, "/errInternal.jsp");
 			}
 		} else if (action.equals("search")) {
-			// リクエストパラメータを取得
-			String keyword = request.getParameter("keyword");
+			try {
+				// リクエストパラメータを取得
+				String keyword = request.getParameter("keyword");
+				// 商品名にキーワードを含む商品を取得
+				ItemDAO dao = new  ItemDAO();
+				List<ItemBean> list  = dao.findByName(keyword);
+				// 取得した商品リストをリクエストスコープに登録して画面遷移
+				request.setAttribute("items", list);
+				this.gotoPage(request, response, "/list.jsp");
+			} catch (DAOException e) {
+				e.printStackTrace();
+				request.setAttribute("message", "内部エラーが発生しました。");
+				this.gotoPage(request, response, "/errInternal.jsp");
+			}
 		}
 	}
 
