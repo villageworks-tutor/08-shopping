@@ -85,6 +85,9 @@ public class ShowItemServlet extends HttpServlet {
 				request.setAttribute("message", "内部エラーが発生しました。");
 				this.gotoPage(request, response, "/errInternal.jsp");
 			}
+		} else if (action.equals("search")) {
+			// リクエストパラメータを取得
+			String keyword = request.getParameter("keyword");
 		}
 	}
 
