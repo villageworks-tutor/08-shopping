@@ -27,6 +27,7 @@
 							<% } %>
 						</select>個
 						</b><br />
+						<a href="ShowItemServlet?action=detail&code=${item.code}">詳細</a><br />
 						<input type="hidden" name="action" value="add" />
 						<input type="hidden" name="code" value="${item.code}" />
 						<input type="submit" value="カートに追加" />
