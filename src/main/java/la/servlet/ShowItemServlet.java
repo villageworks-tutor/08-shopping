@@ -65,8 +65,25 @@ public class ShowItemServlet extends HttpServlet {
 				RequestDispatcher dispatcher = request.getRequestDispatcher("/list.jsp");
 				dispatcher.forward(request, response);
 			} catch (DAOException e) {
-				// TODO 自動生成された catch ブロック
 				e.printStackTrace();
+				request.setAttribute("message", "内部エラーが発生しました。");
+				this.gotoPage(request, response, "/errInternal.jsp");
+			}
+		} else if (action.equals("detail")) {
+			try {
+				// リクエストパラメータの取得
+				int code = Integer.parseInt(request.getParameter("code"));
+				// 商品番号の商品を取得
+				ItemDAO dao = new ItemDAO();
+				ItemBean bean = dao.findByPrimaryKey(code);
+				// 取得した商品をリクエストスコープに登録
+				request.setAttribute("item", bean);
+				// 画面遷移
+				this.gotoPage(request, response, "");
+			} catch (DAOException e) {
+				e.printStackTrace();
+				request.setAttribute("message", "内部エラーが発生しました。");
+				this.gotoPage(request, response, "/errInternal.jsp");
 			}
 		}
 	}
@@ -78,4 +95,17 @@ public class ShowItemServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
+	/**
+	 * 指定されたURLに遷移する
+	 * @param request  HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param string 遷移先URL
+	 * @throws IOException 
+	 * @throws ServletException 
+	 */
+	private void gotoPage(HttpServletRequest request, HttpServletResponse response, String nextURL) throws ServletException, IOException {
+		RequestDispatcher dispatcher = request.getRequestDispatcher(nextURL);
+		dispatcher.forward(request, response);
+	}
+	
 }
