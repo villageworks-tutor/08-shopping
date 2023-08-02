@@ -79,7 +79,7 @@ public class ShowItemServlet extends HttpServlet {
 				// 取得した商品をリクエストスコープに登録
 				request.setAttribute("item", bean);
 				// 画面遷移
-				this.gotoPage(request, response, "");
+				this.gotoPage(request, response, "/item.jsp");
 			} catch (DAOException e) {
 				e.printStackTrace();
 				request.setAttribute("message", "内部エラーが発生しました。");
