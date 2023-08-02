@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+.error {
+	color: tomato;
+}
+
+td[colspan="5"], td[colspan="6"] {
+	text-align: right;
+}
+
+.orderNumber {
+	color: tomato;
+	margin: 0 10px;
+	font-weight: bolder;
+	font-size: 130%;
+}
