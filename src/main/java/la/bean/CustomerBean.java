@@ -10,11 +10,12 @@ public class CustomerBean implements Serializable {
 	/**
 	 * フィールド
 	 */
-	private int id;         // 顧客番号
-	private String name;    // 顧客名
-	private String address; // 送付先住所
-	private String tel;     // 連絡先電話番号
-	private String email;   // 連絡先電子メールアドレス
+	private int id;          // 顧客番号
+	private String name;     // 顧客名
+	private String address;  // 送付先住所
+	private String tel;      // 連絡先電話番号
+	private String email;    // 連絡先電子メールアドレス
+	private String password; // パスワード
 	
 	/**
 	 * デフォルトコンストラクタ
@@ -88,6 +89,10 @@ public class CustomerBean implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getPassword() {
+		return this.password;
 	}
 
 	@Override
