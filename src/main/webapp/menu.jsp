@@ -6,6 +6,7 @@
 	<c:forEach items="${applicationScope.categories}" var="category">
 		<a href="/shopping/ShowItemServlet?action=list&code=${category.code}&page=1">${category.name}</a> | 
 	</c:forEach>
+	こんにちは、${sessionScope.customer.name}さん | 
 	<a href="/shopping/CartServlet?action=show">カートを見る</a>
 	<form action="ShowItemServlet" method="get">
 		<input type="text" name="keyword" />
