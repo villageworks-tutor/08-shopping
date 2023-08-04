@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import la.bean.CustomerBean;
 import la.dao.CustomerDAO;
@@ -45,8 +46,11 @@ public class LoginServlet extends HttpServlet {
 					this.gotoPage(request, response, "/login.jsp");
 					return;
 				}
+				// 顧客インスタンスをセッションスコープに登録
+				HttpSession session = request.getSession();
+				session.setAttribute("customer", customer);
 				// 画面遷移
-				this.gotoPage(request, response, "/top.jsp");
+				response.sendRedirect("ShowItemServlet");
 			} catch (DAOException e) {
 				e.printStackTrace();
 				request.setAttribute("message", "内部エラーが発生しました。");
