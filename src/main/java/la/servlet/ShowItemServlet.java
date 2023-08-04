@@ -25,7 +25,7 @@ import la.model.Pagination;
 public class ShowItemServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	// 1ページに表示するレコードの件数
-	public static final int COUNT_PER_PAGE = 2;
+	public static final int COUNT_PER_PAGE = 10;
 
 	/**
 	 * @see Servlet#init(ServletConfig)
