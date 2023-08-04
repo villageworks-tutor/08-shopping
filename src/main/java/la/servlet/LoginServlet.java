@@ -27,7 +27,8 @@ public class LoginServlet extends HttpServlet {
 		if (action == null || action.isEmpty()) {
 			// リクエストパラメータが送信されていない場合
 			this.gotoPage(request, response, "/login.jsp");
-			
+		} else if (action.equals("login")) {
+			this.gotoPage(request, response, "/top.jsp");
 		}
 		
 	}
