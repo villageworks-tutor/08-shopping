@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h3>ログイン</h3>
-	<form action="/shopping/LoginSevlet" method="post">
+	<form action="/shopping/LoginServlet" method="post">
 		メールアドレス：<input type="text" name="email" /><br />
 		パスワード：<input type="text" name="password" /><br />
 		<input type="hidden" name="action" value="login" />
