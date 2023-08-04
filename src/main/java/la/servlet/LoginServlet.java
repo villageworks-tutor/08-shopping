@@ -56,6 +56,26 @@ public class LoginServlet extends HttpServlet {
 				request.setAttribute("message", "内部エラーが発生しました。");
 				this.gotoPage(request, response, "/errInternal.jsp");
 			}
+		} else if (action.equals("logout")) {
+			// セッションを取得
+			HttpSession session = request.getSession(false);
+			if (session == null) {
+				this.gotoPage(request, response, "/login.jsp");
+				return;
+			}
+			// ログイン情報を取得
+			CustomerBean customer = (CustomerBean) session.getAttribute("customer");
+			if (customer == null) {
+				request.setAttribute("message", "内部エラーが発生しました。");
+				this.gotoPage(request, response, "/errInternal.jsp");
+				return;
+			}
+			// セッションスコープのcustomerキーを削除
+			session.removeAttribute("customer");
+			// セッションスコープを解放
+			session.invalidate();
+			// ログイン画面に遷移
+			this.gotoPage(request, response, "/login.jsp");
 		}
 		
 	}
