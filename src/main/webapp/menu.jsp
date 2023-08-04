@@ -4,11 +4,12 @@
 <nav>
 	<a href="/shopping">ようこそ</a> | 
 	<c:forEach items="${applicationScope.categories}" var="category">
-		<a href="/shopping/ShowItemServlet?action=list&code=${category.code}">${category.name}</a> | 
+		<a href="/shopping/ShowItemServlet?action=list&code=${category.code}&page=1">${category.name}</a> | 
 	</c:forEach>
 	<a href="/shopping/CartServlet?action=show">カートを見る</a>
 	<form action="ShowItemServlet" method="get">
 		<input type="text" name="keyword" />
+		<input type="hidden" name="page" value="1" />
 		<input type="hidden" name="action" value="search" />
 		<input type="submit" value="検索" />
 	</form>

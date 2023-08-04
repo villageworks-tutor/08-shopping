@@ -16,6 +16,7 @@ import la.bean.CategoryBean;
 import la.bean.ItemBean;
 import la.dao.DAOException;
 import la.dao.ItemDAO;
+import la.model.Pagination;
 
 /**
  * Servlet implementation class ShowItemServlet
@@ -23,6 +24,8 @@ import la.dao.ItemDAO;
 @WebServlet("/ShowItemServlet")
 public class ShowItemServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	// 1ページに表示するレコードの件数
+	public static final int COUNT_PER_PAGE = 2;
 
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -56,14 +59,19 @@ public class ShowItemServlet extends HttpServlet {
 			try {
 				// リクエストパラメータを取得
 				int categoryCode = Integer.parseInt(request.getParameter("code"));
+				int page = Integer.parseInt(request.getParameter("page")); // 初回検索の場合はカテゴリー別商品一覧の最初のページを表示（menu.jspのカテゴリリンクも修正）
 				// 取得したカテゴリーコードに属する商品を取得
 				ItemDAO dao = new ItemDAO();
 				List<ItemBean> list = dao.findByCategory(categoryCode);
+				list = dao.findByCategory(categoryCode, page);
 				// 検索結果件数を取得
 				int count = dao.countByCategory(categoryCode);
+				int maxPage = count / COUNT_PER_PAGE + 1;
 				// 取得した商品リストと検索件数をリクエストスコープに登録
+				Pagination pagination = new Pagination(action, Integer.toString(categoryCode), "", Integer.toString(maxPage));
 				request.setAttribute("items", list);
 				request.setAttribute("count", count);
+				request.setAttribute("pagination", pagination);
 				// 画面遷移
 				RequestDispatcher dispatcher = request.getRequestDispatcher("/list.jsp");
 				dispatcher.forward(request, response);
@@ -92,14 +100,19 @@ public class ShowItemServlet extends HttpServlet {
 			try {
 				// リクエストパラメータを取得
 				String keyword = request.getParameter("keyword");
+				int page = Integer.parseInt(request.getParameter("page"));
 				// 商品名にキーワードを含む商品を取得
 				ItemDAO dao = new  ItemDAO();
 				List<ItemBean> list  = dao.findByName(keyword);
+				list = dao.findByName(keyword, page);
 				// 検索結果件数を取得
 				int count = dao.countByName(keyword);
+				int maxPage = count / COUNT_PER_PAGE + 1;
+				Pagination pagination = new Pagination(action, "", keyword, Integer.toString(maxPage));
 				// 取得した商品リストと検索件数をリクエストスコープに登録して画面遷移
 				request.setAttribute("items", list);
 				request.setAttribute("count", count);
+				request.setAttribute("pagination", pagination);
 				this.gotoPage(request, response, "/list.jsp");
 			} catch (DAOException e) {
 				e.printStackTrace();

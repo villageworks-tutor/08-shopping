@@ -10,6 +10,7 @@ import java.util.List;
 
 import la.bean.CategoryBean;
 import la.bean.ItemBean;
+import la.servlet.ShowItemServlet;
 
 /**
  * 商品に関するデータ操作を実行するDAO
@@ -151,6 +152,45 @@ public class ItemDAO {
 	}
 
 	/**
+	 * カテゴリー別の商品一覧の指定されたページの分を取得する。
+	 * @param categoryCode
+	 * @param page
+	 * @return List<ItemBean> 商品リスト
+	 * @throws DAOException 
+	 */
+	public List<ItemBean> findByCategory(int categoryCode, int page) throws DAOException {
+		// 1ページに表示するレコードの件数：ShowItemServletのクラス定数を利用
+		final int countPerPage = ShowItemServlet.COUNT_PER_PAGE;
+		// 実行するSQLの設定
+		String sql = "SELECT * FROM item WHERE category_code = ? ORDER BY code LIMIT " + Integer.toString(countPerPage) + " OFFSET ?";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにパラメータをバインド
+			pstmt.setInt(1, categoryCode);
+			pstmt.setInt(2, countPerPage * (page - 1));
+			try (// sQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 結果セットから商品リストへの詰替え
+				List<ItemBean> list = new ArrayList<ItemBean>();
+				while (rs.next()) {
+					ItemBean bean = new ItemBean();
+					bean.setCode(rs.getInt("code"));
+					bean.setCategoryCode(categoryCode);
+					bean.setName(rs.getString("name"));
+					bean.setPrice(rs.getInt("price"));
+					list.add(bean);
+				}
+				// 商品リストを返却
+				return list;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの取得に失敗しました");
+		}
+	}
+
+	/**
 	 * 商品名にキーワードが含まれている商品を取得する
 	 * @param keyword 検索キーワード
 	 * @return List<ItemBean> 商品リスト
@@ -207,6 +247,37 @@ public class ItemDAO {
 				return count;
 			}
 			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの取得に失敗しました。");
+		}
+	}
+
+	public List<ItemBean> findByName(String keyword, int page) throws DAOException {
+		// 実行するSQLの設定
+		// 1ページに表示するレコードの件数：ShowItemServletのクラス定数を利用
+		final int countPerPage = ShowItemServlet.COUNT_PER_PAGE;
+		String sql = "SELECT * FROM item WHERE name LIKE ? ORDER BY code LIMIT " + Integer.toString(countPerPage) + " OFFSET ?";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにパラメータをバインド
+			pstmt.setString(1, "%" + keyword + "%");
+			pstmt.setInt(2, countPerPage * (page - 1));
+			try (// SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 結果セットから商品リストへの詰替え
+				List<ItemBean> list = new ArrayList<ItemBean>();
+				while (rs.next()) {
+					ItemBean bean = new ItemBean();
+					bean.setCode(rs.getInt("code"));
+					bean.setCategoryCode(rs.getInt("category_code"));
+					bean.setName(rs.getString("name"));
+					bean.setPrice(rs.getInt("price"));
+					list.add(bean);
+				}
+				// 商品リストを返却
+				return list;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new DAOException("レコードの取得に失敗しました。");
