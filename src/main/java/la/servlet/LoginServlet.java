@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import la.bean.CustomerBean;
+import la.dao.CustomerDAO;
+import la.dao.DAOException;
+
 /**
  * Servlet implementation class LoginServlet
  */
@@ -28,7 +32,26 @@ public class LoginServlet extends HttpServlet {
 			// リクエストパラメータが送信されていない場合
 			this.gotoPage(request, response, "/login.jsp");
 		} else if (action.equals("login")) {
-			this.gotoPage(request, response, "/top.jsp");
+			try {
+				// リクエストパラメータを取得
+				String email = request.getParameter("email");
+				String password = request.getParameter("password");
+				// リクエストパラメータを利用して顧客インスタンスを取得
+				CustomerDAO dao = new CustomerDAO();
+				CustomerBean customer = dao.findByEmailAndPassword(email, password);
+				if (customer == null) {
+					// 顧客インスタンスを取得できない場合：メッセージを表示してログイン画面に遷移
+					request.setAttribute("message", "メールアドレスとパスワードが一致しませんでした。");
+					this.gotoPage(request, response, "/login.jsp");
+					return;
+				}
+				// 画面遷移
+				this.gotoPage(request, response, "/top.jsp");
+			} catch (DAOException e) {
+				e.printStackTrace();
+				request.setAttribute("message", "内部エラーが発生しました。");
+				this.gotoPage(request, response, "/errInternal.jsp");
+			}
 		}
 		
 	}
