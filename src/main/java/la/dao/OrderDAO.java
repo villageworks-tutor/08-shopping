@@ -133,6 +133,60 @@ public class OrderDAO {
 		}
 		
 	}
-	
-	
+
+	public int order(int customerNumber, Cart cart) throws DAOException {
+		// セッションから顧客番号を取得
+		// 最新の注文番号の初期化
+		int orderNumber = 0;
+		// 最新の注文番号を取得
+		String sql = "SELECT nextval('ordered_code_seq')";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);
+			 // SQLの実行と結果セットの取得
+			 ResultSet rs = pstmt.executeQuery();) {
+			// 結果セットから最新の注文番号を取得
+			if (rs.next()) {
+				orderNumber = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("シーケンスの取得に失敗しました。");
+		}
+		// orderテーブルに注文を登録
+		sql = "INSERT INTO ordered (code, customer_code, ordered_date, total_price) VALUES (?, ?, ?, ?)";
+		try (// SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// プレースホルダにデータをバインド
+			pstmt.setInt(1, orderNumber);
+			pstmt.setInt(2, customerNumber);
+			pstmt.setDate(3, new Date(System.currentTimeMillis()));
+			pstmt.setInt(4, cart.getTotal());
+			// SQLの実行
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの登録に失敗しました。");
+		}
+		
+		// 注文明細の登録
+		sql = "INSERT INTO ordered_detail (ordered_code, item_code, num) VALUES (?, ?, ?)";
+		try (// SQL実行オブジェクトの取得
+			 PreparedStatement pstmt = this.con.prepareStatement(sql);) {
+			// カート内商品リストを取得
+			List<ItemBean> items = cart.getItems();
+			for (ItemBean item : items) {
+				pstmt.setInt(1, orderNumber);
+				pstmt.setInt(2, item.getCode());
+				pstmt.setInt(3, item.getQuantity());
+				// SQLの実行
+				pstmt.executeUpdate();
+			}
+			// 注文番号を返却
+			return orderNumber;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DAOException("レコードの登録に失敗しました。");
+		}
+	}
+
 }

@@ -52,7 +52,7 @@
 					</tr>
 				</table>
 				<form action="/shopping/OrderServlet" method="post">
-					<input type="hidden" name="action" value="input_customer" />
+					<input type="hidden" name="action" value="confirm" />
 					<input type="submit" value="注文する" />
 				</form>
 			</c:otherwise>
