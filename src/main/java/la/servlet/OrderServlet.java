@@ -50,6 +50,16 @@ public class OrderServlet extends HttpServlet {
 			// actionキーが送信されないかまたは「input_customer」である場合
 			this.gotoPage(request, response, "/customerInfo.jsp");
 		} else if (action.equals("confirm")) {
+			// セッションからログイン情報を取得
+			CustomerBean customer = (CustomerBean) session.getAttribute("customer");
+			if (customer == null) {
+				// ログイン情報がない場合：ログイン画面に遷移
+				request.setAttribute("message", "ログインしてください。");
+				this.gotoPage(request, response, "/login.jsp");
+				return;
+			}
+			
+			/*
 			// リクエストパラメータを取得
 			String name = request.getParameter("name");
 			String address = request.getParameter("address");
@@ -58,6 +68,7 @@ public class OrderServlet extends HttpServlet {
 			// 取得したパラメータから顧客インスタンスをセッションスコープに登録
 			CustomerBean bean = new CustomerBean(name, address, tel, email);
 			session.setAttribute("customer", bean);
+			*/
 			// 画面遷移
 			this.gotoPage(request, response, "/confirm.jsp");
 		} else if (action.equals("order")) {
@@ -71,7 +82,8 @@ public class OrderServlet extends HttpServlet {
 				}
 				// 注文確定処理の実行
 				OrderDAO dao = new OrderDAO();
-				int orderNumber = dao.order(customer, cart);
+				int orderNumber = dao.order(customer.getId(), cart);
+				// int orderNumber = dao.order(customer, cart);
 				// セッションスコープのキーを削除
 				session.removeAttribute("customer");
 				session.removeAttribute("cart");
